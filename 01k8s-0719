@@ -1,0 +1,75 @@
+
+===========================================
+// Setup Kubernetes (K8s) Cluster on AWS //
+===========================================
+
+1. Create Ubuntu EC2 instance (Name: k8s-server)
+
+2. Install AWSCLI
+    curl https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip
+    apt install unzip python
+    unzip awscli-bundle.zip
+    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+    aws --version
+ 
+3. Install kubectl
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    chmod +x ./kubectl
+    sudo mv ./kubectl /usr/local/bin/kubectl
+    kubectl version
+
+4. Create an IAM user/role  with Route53, EC2, IAM and S3 full access
+    AWS Services > IAM > roles > AWS services > EC2 > next.permission > search & add (EC2full access, S3full access, Route53full access, IAMfull access) > next tag > 
+    name: k8s-role > next > role name > k8s-role > Create role.
+
+5. Attach IAM role to server
+    Now attach this role to EC2 instance > Slect EC2 (k8s-Server) > Action > Instance setting > IAM role > search & add > apply.
+    Note: If you create IAM user with programmatic access then provide Access keys. 
+    
+    $ aws configure                 ## now need to tell this server ec2-k8s to create servers only on mumbai region ##
+    $ aws access key             ## no need bec its role ##
+    $ aws  secret key             ## no need its role ##
+    $ default region name   :  ap-south-1
+    $ default output                 ## none
+    $ aws s3 ls                       ## to check role is working or not, first create a buket in s3 (demo.k8s.saiftech.net) here configuration will be store. ##
+
+6. Install kops on ubuntu instance:
+
+    curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+    chmod +x kops-linux-amd64
+    sudo mv kops-linux-amd64 /usr/local/bin/kops
+
+7. Create a Route53 private Hosted zone (you can create Public hosted zone if you have a domain)
+    Go to Route 53 > DNS management > Create hosted zone > Domain name : saiftech.net > type: Private hosted zone > VPCID: Mumbai > create.
+
+8. Create an S3 bucket 
+    aws s3 mb s3://box.k8s.saiftech.net                                           ## Command to create s3-bucket from kubernet magment console ##
+
+9. Expose environment variable:                   
+    export KOPS_STATE_STORE=s3://box.k8s.saiftech.net             ## Export this bucket so that kops can store the config on this bucket ##
+
+10. Create sshkeys before creating cluster
+    ssh-keygen                                                                               ## Generate this key pair, this key pair is use full to log in to kubernets cluster ##
+
+11. Create kubernetes cluster definitions on S3 bucket 
+    kops create cluster --cloud=aws --zones=ap-south-1b --name=cluster.k8s.saiftech.net --dns-zone=saiftech.net --dns private
+    Note: go to s3-bucket and check its creating or not.
+
+12. Create kubernetes cluser
+      ## before this we can edit mastar and node for smaller instane. (eg:type: t2.micro) ##    
+      kops update cluster --name cluster.k8s.saiftech.net --yes    ## to set up cluster with this command it will take 5 to 10 min ##
+
+    ## Go to Route 53 and check four record set created or not ##
+    ## Under EC2 we will get 3 more instances ##
+    ## Wait for 10 mints ##
+
+13. Validate your cluster 
+      kops validate cluster
+
+     ## test to Login by ssh##
+     kubectl version
+     Note: Now we can update kubectl by downloding and installing.
+
+14. To list nodes
+     kubectl get nodes 
+----------------------------------------End------------------------
