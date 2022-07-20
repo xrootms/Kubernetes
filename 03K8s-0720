@@ -1,0 +1,144 @@
+=================================================================================================================
+Kubernets is Open-source Container Management tool which automate containers, container scalling and loadblancing.
+
+Master runs 'control plane' to run cluster smoothly, (Control plane is set of process).
+
+1.> //kube-api-server://
+kube-api-server is frent end of control plane and intract directly with user (ie; we apply file.yaml).
+
+
+2.> //etcd:// 
+etcd store metadat and status of cluster.(key-value- like db).
+
+
+3.> //kube-schduler:// 
+Handle pod creation and management,(take action to pod creation in which node) 
+
+
+4.> Controller Management:- 
+ Make save actual state of cluster matches to desire state.
+
+
+5.>// Kubelet//
+its agent running on node, listen to master (pod creation  request) and send success/fail resport to master.
+
+
+6.> //Container engine:// 
+ work with kubelet, pulling image, start stop container, exposing containers on ports specified in manifest.
+
+
+7.> //Kube-proxy:// 
+ Assign IP to each pod, (dynamicly).
+
+
+8.> //Pod://
+ Pod is group of one or more containers, (smallest unit in kubernets).
+ Pod runs on node, while control by master, k8s know only abt pods (does not know abt containers).
+ Pod Limitaions- no auto-healing and auto scaling, pod craches.
+
+
+9.> //Cluster: A cluster is group of nodes.//
+
+
+10.> //k8s-Objects://
+ kubernets objects are represented in json or yaml fils and describe the status of our cluster.
+ k8s always chacking two things (what is desire state and what is actual state).
+
+Basic k8s objects:
+a.> Pod
+b.> Service
+c.> Volume
+d.> NameSpace
+e.> ReplicaSet
+f.> Secrets
+g.> Configmap
+h.> Deployments
+i.> jobs
+j.> Daemonset
+--
+High level K8s Objects:-
+a.> Replication set :- auto scaling and auto healing
+b.> Deployment :- versioning and Rollback
+c.> service :- Static (no ephererel) IP and networking.
+d.> Volume:- non-ephemeral storage.
+
+Relationship b/w objects:
+- Pod manages containers
+- Replicaset manage pods
+- Service expose pod processes to outside world.
+- CongigMap and secrets helps tp cofigure pods.
+
+//State of objets//<(actual state) and (desire state spec).
+> replicas (2/2)
+> images (ubuntu/tomcat)
+> name    (xyz)
+> Port     (80)
+> volume (/path)
+------
+//k8s Objects Management// 
+ kubectl tool is use to create and manage k8s objects.
+ There r two object management technique;-
+a.> Declarative : using json or yaml. (prod)
+b.> Imperative: live objects (testing and development.
+
+
+11.> //Labels and Slector://
+- Labels are thes mechanisum used to organise k8s.
+- Lables are similar to tags, multiple lables can be added to a single objects.
+- Once lables are attached to an objects, we would need filters to narrow down and
+- these are called slectors.
+ two types of slectors:
+a.> Equality based (=, !=)
+b.> Ser based (in. notin, exits).
+
+
+12.> //Node Slector//
+- We can use lables to tag nodes.
+- first we give lables to node then use node-slector to pod configuration.
+
+
+13.> //Scalling and Replication//
+By default k8s has no scaling & Replication feature.
+so when any pod fails/deleted we can not recreate pod automaticall.
+
+a.> Replication Control:-
+- A RC is a object that help to create multiple pods, then make sue that pods always running.
+- it works on equality base slector.
+
+b.> Replica set;
+- RS is adv. version of RC. it support both equality and set base slector.
+
+
+14.> //Deployment & Rollback//
+- RC & RS do not able to do update and rollback apps in cluster.
+- A deployment object act as a supervisor for pods, giving you fine-grained control over how and when a new pod is rolledout, 
+  updated or rolledback to previous state.
+
+
+15.> //Services://
+- When pod get fail/deleted/terminated its IP will changed, so that we use service-object for this problem.
+- Service object is an logical bridge b/w pods and end users, which privide Virtual IP, (vip).
+- VIP's purpose is to forward traffic to one or more pods.
+- kube-proxy keeps maping b/w vip and pods up to date.
+- service help to expose VIP mapped to pods & allow applications to recive trafic.
+- Lables are used to select which pod to be put under an service.
+Service Types:-
+a.> cluster ip
+b.> nodePort
+c.> loadblancer
+d.> Headless
+
+a.> Cluster IP:-
+- Expose VIP only reachable from within cluster.
+- can not access it from outside cluster.
+- It is default.
+
+b.> NodePort:-
+- Make a service accesable from outside cluster
+- we can access containers from outside cluster.
+
+
+16.> //Volume//
+a.> EmptyDir - it use with in pod to share contents b/w containers.
+b.> HostPath - it use when we want to access content of a pod/container from host machine.
+--------------------------------------------------------------------------------------------------------------------------
