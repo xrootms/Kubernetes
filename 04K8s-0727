@@ -1,0 +1,37 @@
+##Pod with Annotations, Ports, Env##
+
+kind: Pod                              
+apiVersion: v1                     
+metadata:                           
+  name: testpod01   
+  annotations:
+   note: pod-creation
+spec:
+  containers:
+    - name: c01
+      image: httpd
+      command: ["/bin/bash", "-c", "while true; do echo love You; sleep 5 ; done"]
+      env:                                                 # List of environment variables to be used inside the pod
+       - name: MYNAME
+         value: saifu
+      ports:
+       - containerPort: 80
+:wq
+
+-------
+
+## MULTI CONTAINER POD##
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: testpod02
+spec:
+  containers:
+    - name: c02
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo love You; sleep 5 ; done"]
+    - name: c01
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo Like You; sleep 5 ; done"]
+wq:
