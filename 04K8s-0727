@@ -1,3 +1,4 @@
+
 ##Pod with Annotations, Ports, Env##
 
 kind: Pod                              
@@ -11,15 +12,13 @@ spec:
     - name: c01
       image: httpd
       command: ["/bin/bash", "-c", "while true; do echo love You; sleep 5 ; done"]
-      env:                                                 # List of environment variables to be used inside the pod
+      env:                                                
        - name: MYNAME
          value: saifu
       ports:
        - containerPort: 80
 :wq
-
 -------
-
 ## MULTI CONTAINER POD##
 
 kind: Pod
@@ -35,3 +34,16 @@ spec:
       image: ubuntu
       command: ["/bin/bash", "-c", "while true; do echo Like You; sleep 5 ; done"]
 wq:
+--------
+$ kubectl apply -f pod01.yaml
+$ kubectl get pods
+$ kubectl get pods -o wide                                       #details of pods
+$ kubectl describe pods/testpod01
+$ kubectl logs -f <pod-name>                                     # to see  containet details#
+$ kubectl logs -f testpod01  -c <contaner-name>                  # to see multuple containet details#
+$ kubectl exec testpod01 -it -c c001 -- /bin/bash                ## to inter inside container ##
+$ kubectl exec testpod3 -c c01 -- hostname -i                    ## tocheck pod ip add ##
+$ curl ip:80
+$ kubectl delete -f pod01.yaml
+
+
