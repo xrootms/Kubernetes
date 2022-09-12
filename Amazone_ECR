@@ -1,0 +1,22 @@
+step;1
+go to IAM >> roles >> create role  >> EC2 >> next permission >>  search (AmazoneEC2ContainerResistryFullAccess)
+next-tags  >> role-name (ec2-ecr-role) >> create role.
+
+step: 2
+assign this role to EC2_dockerhost. (//now EC2 has full access to AmazoneECR)
+
+step:3
+sudo apt install awscli -y   (//setup awscli for access ECR using AWS CLI and login//)
+aws --version
+
+step:4
+search ECR >> Create reposetry >> give name >> click repo. name >> view push command >> 
+copy first one (aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 438158199.dkr.ecr.ap-south-1.amazonaws.com)
+and past {//for login into ECR//}
+successfully logedin
+
+step:5
+tag image
+docker tag <image-name>  438158199.dkr.ecr.ap-south-1.amazonaws.com/demoecr:latest
+docker images
+docker push 438158199.dkr.ecr.ap-south-1.amazonaws.com/demoecr:latest
